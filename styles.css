@@ -1,0 +1,62 @@
+* {
+  box-sizing: border-box;
+}
+:root {
+  --yellow: #fdd808;
+}
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: "Cal Sans";
+  align-items: center;
+  gap: 25px;
+  background-color: #c4c2b0;
+}
+.main-container {
+  display: flex;
+  flex-direction: column;
+}
+.grid-container {
+  display: grid;
+  border: 15px solid var(--yellow);
+  border-radius: 20px;
+  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  grid-template-rows: repeat(3, minmax(150px, 1fr));
+  gap: 10px;
+  background-color: var(--yellow);
+}
+.grid-element {
+  background-color: #f2f2f0;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7rem;
+}
+.score-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(100px, 1fr));
+  grid-template-rows: minmax(25px, 0.5fr) minmax(40px, 1fr);
+  border: 7px solid var(--yellow);
+  background-color: var(--yellow);
+  gap: 3px;
+  border-radius: 6px;
+  text-align: center;
+}
+.score-cell {
+  background-color: #f2f2f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: larger;
+}
+.new-game {
+  padding: 15px 40px;
+  background-color: var(--yellow);
+  border-radius: 10px;
+  border: none;
+  font-size: x-large;
+  font-family: inherit;
+  color: white;
+}
