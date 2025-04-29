@@ -31,7 +31,7 @@ const checkForWin = (function () {
     return {
         checkWin: function (gameboard) {
             var boardHasEmpty = 0;
-            console.log(gameboard.board);
+
             for (const outer of winStatus) {
                 let [a, b, c] = outer;
                 // console.log(outer)
@@ -43,8 +43,8 @@ const checkForWin = (function () {
                 else if (gameboard.board[a] == gameboard.board[b] && gameboard.board[b] == gameboard.board[c]) {
                     // console.log(gameboard.board[a], gameboard.board[b], gameboard.board[c]);
                     gameboard.gameEnd();
-                    console.log(outer);
-                    return (`${gameboard.board[a]} is winner`);
+
+                    return (gameboard.board[a]);
                 }
             }
             if (boardHasEmpty == 0) {
@@ -57,9 +57,16 @@ const checkForWin = (function () {
     }
 })();
 function createPlayer(name, symbol) {
+    var score = 0;
     return {
         "name": name,
-        "symbol": symbol
+        "symbol": symbol,
+        addScore: function () {
+            score = score + 1;
+        },
+        getScore: function () {
+            return score;
+        }
     };
 }
 
@@ -68,20 +75,41 @@ const displayController = (function () {
         addListener: function (symbol) {
             function handleClick(event) {
                 if (event.target.classList.contains('empty')) {
-                    console.log(symbol);
+
                     event.target.textContent = symbol;
                     let index = event.target.dataset.index;
                     gameboard.mark(index, symbol);
                     event.target.classList.remove("empty");
                     gridContainerEL.removeEventListener("click", handleClick);
 
-                    console.log(gameboard.board)
+
                     result = checker.checkWin(gameboard);
 
 
                     if (result !== false) {
-                        console.log(checker.checkWin(gameboard));
-                        alert(checker.checkWin(gameboard));
+                        if (result === player1.symbol) {
+                            player1.addScore();
+                            setTimeout(() => {
+                                alert(`${player1.name} wins`)
+                            }, 0);
+                        }
+
+                        else if (result === player2.symbol) {
+                            player2.addScore();
+                            setTimeout(() => {
+                                alert(`${player2.name} wins`);
+                            }, 0);
+                        }
+                        else {
+                            setTimeout(() => {
+                                alert(`Tie`);
+                            }, 0);
+
+                        }
+                        // console.log(checker.checkWin(gameboard));
+                        displayControl.updateScore(player1.getScore(), player2.getScore())
+
+
                     }
                     else
                         gameState.playRound();
@@ -96,12 +124,25 @@ const displayController = (function () {
                 item.textContent = "";
                 item.classList.add("empty");
             })
+        },
+        addScorecardName: function (player1name, player2name) {
+            const player1 = document.querySelector(".player1");
+            player1.textContent = player1name;
+            const player2 = document.querySelector(".player2");
+            player2.textContent = player2name;
+        },
+        updateScore: function (player1Score, player2Score) {
+            console.log(player1Score);
+            const player1ScoreGrid = document.querySelector(".player1-score");
+            player1ScoreGrid.textContent = player1Score;
+            const player2ScoreGrid = document.querySelector(".player2-score");
+            player2ScoreGrid.textContent = player2Score;
         }
     }
 }
 )();
 const stateManager = (function () {
-    let symbol;
+    // let symbol;
     return {
         setSymbol: function (symbol) {
             this.symbol = symbol
@@ -110,21 +151,20 @@ const stateManager = (function () {
             return this.symbol;
         },
         playRound: function () {
-            console.log(symbol);
             displayControl.addListener(this.symbol);
-            this.symbol == "X" ? this.symbol = "O" : this.symbol = "X";
+            this.symbol == player1.symbol ? this.symbol = player2.symbol : this.symbol = player1.symbol;
         }
     }
 
 })()
 
-// const gameboard = createBoard;
-// const checker = checkForWin;
-// const displayControl = displayController;
-// const p1name = prompt("Enter player1 name");
-// const p1SymbolChoice = prompt("Choose X=1 0=2");
-// const p2name = prompt("Enter player2 name");
+const gameboard = createBoard;
+const checker = checkForWin;
+const displayControl = displayController;
 
+const p1name = prompt("Enter player1 name");
+const p1SymbolChoice = prompt("Choose X=1 0=2");
+const p2name = prompt("Enter player2 name");
 if (p1SymbolChoice == 1) {
     var p1Symbol = "X";
     var p2Symbol = "O"
@@ -135,22 +175,23 @@ else {
 }
 player1 = createPlayer(p1name, p1Symbol);
 player2 = createPlayer(p2name, p2Symbol);
-currentTurn = player1.symbol;
+
 
 const gameState = stateManager;
-console.log(currentTurn);
-gameState.setSymbol(currentTurn);
+gameState.setSymbol(player1.symbol);
+displayControl.addScorecardName(player1.name, player2.name);
+// displayControl.updateScore(player1.getScore(), player2.getScore())
 gameState.playRound();
 
 function newGame() {
     gameboard.resetBoard();
     displayControl.clearGrids();
     gameState.playRound();
-    console.log("newGame");
+
 }
 const newGameButton = document.querySelector(".new-game")
 newGameButton.addEventListener("click", newGame);
-console.log("newGame");
+
 
 
 
